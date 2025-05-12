@@ -1,8 +1,17 @@
-import axios from "axios"
+// src/services/chatService.js
+import axios from "axios";
+
+/**
+ * Determine base URL:
+ * - Uses NEXT_PUBLIC_API_BASE_URL if set (deployed environment)
+ * - Otherwise defaults to localhost for local development
+ */
+const BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
 // Configure axios defaults
-axios.defaults.baseURL = "http://localhost:8000"
-axios.defaults.headers.common["Content-Type"] = "application/json"
+axios.defaults.baseURL = BASE_URL;
+axios.defaults.headers.common["Content-Type"] = "application/json";
 
 /**
  * Service for interacting with the chat API
@@ -16,14 +25,14 @@ const chatService = {
    */
   sendMessage: async (sessionId, message) => {
     try {
-      const response = await axios.post("/chat", {
+      const { data } = await axios.post("/chat", {
         session_id: sessionId,
         message,
-      })
-      return response.data
+      });
+      return data;
     } catch (error) {
-      console.error("Error sending message:", error)
-      throw error
+      console.error("Error sending message:", error);
+      throw error;
     }
   },
 
@@ -34,12 +43,12 @@ const chatService = {
    */
   resetSession: async (sessionId) => {
     try {
-      await axios.delete(`/session/${sessionId}`)
+      await axios.delete(`/session/${sessionId}`);
     } catch (error) {
-      console.error("Error resetting session:", error)
-      throw error
+      console.error("Error resetting session:", error);
+      throw error;
     }
   },
-}
+};
 
-export default chatService
+export default chatService;
